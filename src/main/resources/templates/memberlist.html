@@ -29,7 +29,6 @@
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="/member/list">회원목록</a></li>
                         <li><a class="dropdown-item" href="/member/write">회원추가</a></li>
-                        <li><a class="dropdown-item" href="/member/plus">기간연장</a></li>
                     </ul>
                 </li>
             </ul>
@@ -58,22 +57,20 @@
         <tbody>
         <tr scope="row" th:each="member : ${list}">
             <th th:text="${member.id}">ID 1번</th>
-            <td th:text="${member.getGrade()}">등급-실버</td>
+            <td th:text="${member.grade}">등급-실버</td>
             <td>
-                <a th:text="${member.getName()}" th:href="@{/member/view(id=${member.id})}">홍길동</a>
+                <a th:text="${member.name}" th:href="@{/member/view(id=${member.id})}">홍길동</a>
             </td>
-            <td th:text="${member.getType()}">헬스, 필라테스</td>
-            <td th:text="${member.getStartDay()}">2021-09-21 신청</td>
-            <td th:text="${member.getEndDay()}">2021-12-21 종료</td>
-            <td th:text="${member.getRemainDay() + '일 남았습니다.'}">30일 남았습니다.</td>
-            <td th:text="${member.getPay()} + '원 지불하셨습니다.'">30000원 지불</td>
+            <td th:text="${member.type}">헬스, 필라테스</td>
+            <td th:text="${member.startDay}">2021-09-21 신청</td>
+            <td th:text="${member.endDay}">2021-12-21 종료</td>
+            <td th:text="${member.remainDay + '일 남았습니다.'}">30일 남았습니다.</td>
+            <td th:text="${member.pay} + '원 지불하셨습니다.'">30000원 지불</td>
         </tr>
         </tbody>
     </table>
 
     <a class="btn btn-primary" href="/member/write">회원추가</a>
-
-    <a class="btn btn-primary" href="/member/plus">기간연장</a>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
