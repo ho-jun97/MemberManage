@@ -24,12 +24,14 @@ public class MemberController {
 
     @GetMapping("/member/write")
     public String memberWriteForm(){
+
         return "memberwrite";
     }
 
     @PostMapping("/member/writedo")
     public String memberWriteDo(Member member){
-        memberService.write(member);
+        Member setMember = memberService.beforeWrite(member);
+        memberService.write(setMember);
         return "redirect:/member/list";
     }
 
@@ -37,7 +39,8 @@ public class MemberController {
     public String memberList(Model model)throws Exception{
         List<Member> member = memberService.memberList();
 
-        model.addAttribute("list",member);
+        List<Member> setMember = memberService.getDay(member);
+        model.addAttribute("list",setMember);
         return "memberlist";
     }
 
@@ -54,6 +57,7 @@ public class MemberController {
         return "redirect:/member/list";
     }
 
+    // member 업데이트하기위한 페이지 이동
     @GetMapping("/member/modify/{id}")
     public String memberModify(@PathVariable("id")Integer id, Model model){
         model.addAttribute("member",memberService.memberView(id));
@@ -61,9 +65,50 @@ public class MemberController {
         return "membermodify";
     }
 
+    // member 업데이트
     @PostMapping("/member/update/{id}")
     public String memberUpdate(@PathVariable("id")Integer id, Member member){
-        return "";
+        Member beforeMember = memberService.memberView(id);
+        Member after = memberService.memberUpdate(member,beforeMember);
+
+        memberService.write(after);
+        return "redirect:/member/list";
+    }
+
+    // 전체연장 폼
+    @GetMapping("/member/plus")
+    public String memberPlusForm(){
+        return "memberplus";
+    }
+
+    // 전체연장 실행
+    @PostMapping("/member/plusdo")
+    public String memberPlusDo(int plusDate) throws Exception{
+        List<Member> members = memberService.memberList();
+        for(Member member : members) {
+            Member after = memberService.memberPlusDay(member, plusDate);
+            memberService.write(after);
+        }
+
+        return "redirect:/member/list";
+    }
+
+    // 개인 연장 폼
+    @GetMapping("/member/personalplus/{id}")
+    public String personalPlusForm(@PathVariable("id") Integer id, Model model){
+        model.addAttribute("member", memberService.memberView(id));
+        System.out.println("check");
+        return "personalplus";
+    }
+
+    // 개인 연장 실행
+    @PostMapping("/member/personalplusdo/{id}")
+    public String personalPlusDo(@PathVariable("id")Integer id, int plusDate) throws Exception{
+        Member member = memberService.memberView(id);
+        Member after = memberService.memberPlusDay(member, plusDate);
+        System.out.println("check");
+        memberService.write(after);
+        return "redirect:/member/list";
     }
 
 }

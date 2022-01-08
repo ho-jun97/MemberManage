@@ -3,6 +3,8 @@ package com.Study.MemberManage.service;
 import com.Study.MemberManage.entity.Member;
 import com.Study.MemberManage.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -20,7 +22,10 @@ public class MemberService {
     @Autowired
     MemberRepository memberRepository;
     public void write(Member member){
+        memberRepository.save(member);
+    }
 
+    public Member beforeWrite(Member member){
         // 신청일자 셋팅
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -66,11 +71,13 @@ public class MemberService {
                 break;
         }
         member.setPay((int)discountPrice);
-        memberRepository.save(member);
-    }
 
-    public List<Member> memberList() throws Exception{
-        List<Member> members = memberRepository.findAll();
+        return member;
+    }
+    public List<Member> memberList(){
+        return memberRepository.findAll();
+    }
+    public List<Member> getDay(List<Member> members)throws Exception{
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate now = LocalDate.now();
@@ -164,5 +171,23 @@ public class MemberService {
         // 종료일자 셋팅 완료
 
         return update;
+    }
+
+    public Member memberPlusDay(Member member, int plusDate)throws Exception{
+            String endDay = member.getEndDay();
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+            Calendar cal = Calendar.getInstance();
+            Date regDate = null;
+            regDate = format.parse(endDay);
+            cal.setTime(regDate);
+
+            cal.add(Calendar.DATE, plusDate);
+            String dateValue = format.format(cal.getTime());
+
+
+            member.setEndDay(dateValue);
+
+            return member;
     }
 }

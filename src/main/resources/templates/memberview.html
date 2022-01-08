@@ -77,7 +77,7 @@
                 <a href="/member/list" class="btn btn-secondary">목록</a>
                 <a th:href="@{/member/modify/{id}(id=${member.id})}" class="btn btn-secondary">수정</a>
                 <a th:href="@{/member/delete(id=${member.id})}" class="btn btn-danger">삭제</a>
-                <a th:href="@{/member/delete(id=${member.id})}" class="btn btn-danger">연장</a>
+                <a th:href="@{/member/personalplus/{id}(id=${member.id})}" class="btn btn-danger">연장</a>
             </div>
         </form>
     </div>
