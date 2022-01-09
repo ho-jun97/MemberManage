@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Integer> {
-    Page<Member> findByNameContaining(String searchKeyword, Pageable pageable);
+    Page<Member> findByNameContainingOrTypeContaining(String name, String type, Pageable pageable);
 }

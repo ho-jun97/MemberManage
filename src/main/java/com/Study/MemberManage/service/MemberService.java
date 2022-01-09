@@ -4,6 +4,7 @@ import com.Study.MemberManage.entity.Member;
 import com.Study.MemberManage.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -74,10 +75,10 @@ public class MemberService {
 
         return member;
     }
-    public List<Member> memberList(){
-        return memberRepository.findAll();
+    public Page<Member> memberList(String searchName,String searchType,Pageable pageable){
+        return memberRepository.findByNameContainingOrTypeContaining(searchName,searchType,pageable);
     }
-    public List<Member> getDay(List<Member> members)throws Exception{
+    public Page<Member> getDay(Page<Member> members)throws Exception{
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate now = LocalDate.now();

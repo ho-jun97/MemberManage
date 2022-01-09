@@ -3,11 +3,16 @@ package com.Study.MemberManage.controller;
 import com.Study.MemberManage.entity.Member;
 import com.Study.MemberManage.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -36,11 +41,17 @@ public class MemberController {
     }
 
     @GetMapping("/member/list")
-    public String memberList(Model model)throws Exception{
-        List<Member> member = memberService.memberList();
+    public String memberList(Model model,@PageableDefault(size=10,sort = "id" , direction = Sort.Direction.DESC)Pageable pageable,
+                             @RequestParam(required = false, defaultValue = "") String searchText)throws Exception{
+        Page<Member> members = memberService.memberList(searchText,searchText,pageable);
+        Page<Member> setMembers = memberService.getDay(members);
 
-        List<Member> setMember = memberService.getDay(member);
-        model.addAttribute("list",setMember);
+        int startPage = Math.max(1,setMembers.getPageable().getPageNumber() - 4);
+        int endPage = Math.min(setMembers.getTotalPages(),setMembers.getPageable().getPageNumber() + 4);
+
+        model.addAttribute("startPage",startPage);
+        model.addAttribute("endPage",endPage);
+        model.addAttribute("list",setMembers);
         return "memberlist";
     }
 
@@ -83,8 +94,9 @@ public class MemberController {
 
     // 전체연장 실행
     @PostMapping("/member/plusdo")
-    public String memberPlusDo(int plusDate) throws Exception{
-        List<Member> members = memberService.memberList();
+    public String memberPlusDo(int plusDate, Pageable pageable,
+                               @RequestParam(required = false, defaultValue = "") String searchText) throws Exception{
+        Page<Member> members = memberService.memberList(searchText,searchText,pageable);
         for(Member member : members) {
             Member after = memberService.memberPlusDay(member, plusDate);
             memberService.write(after);
@@ -97,7 +109,6 @@ public class MemberController {
     @GetMapping("/member/personalplus/{id}")
     public String personalPlusForm(@PathVariable("id") Integer id, Model model){
         model.addAttribute("member", memberService.memberView(id));
-        System.out.println("check");
         return "personalplus";
     }
 
@@ -106,7 +117,6 @@ public class MemberController {
     public String personalPlusDo(@PathVariable("id")Integer id, int plusDate) throws Exception{
         Member member = memberService.memberView(id);
         Member after = memberService.memberPlusDay(member, plusDate);
-        System.out.println("check");
         memberService.write(after);
         return "redirect:/member/list";
     }
