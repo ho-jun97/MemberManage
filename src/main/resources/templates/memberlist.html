@@ -32,6 +32,9 @@
                     </ul>
                 </li>
             </ul>
+            <form class="d-flex" th:action="@{/logout}" method="post">
+                <button class="btn btn-dark" type="submit">로그아웃</button>
+            </form>
         </div>
     </div>
 </nav>
@@ -78,6 +81,7 @@
         </tbody>
     </table>
 
+    <!--페이징 nav-->
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${1==list.pageable.pageNumber+1} ? 'disabled'">

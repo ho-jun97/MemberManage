@@ -22,17 +22,20 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
+    // localhost:8080 (시작페이지)
     @GetMapping("/")
     public String index(){
         return "index";
     }
 
+    // 회원추가 작성폼
     @GetMapping("/member/write")
     public String memberWriteForm(){
 
         return "memberwrite";
     }
 
+    // 회원 추가
     @PostMapping("/member/writedo")
     public String memberWriteDo(Member member){
         Member setMember = memberService.beforeWrite(member);
@@ -40,16 +43,19 @@ public class MemberController {
         return "redirect:/member/list";
     }
 
+    // 회원 목록
     @GetMapping("/member/list")
-    public String memberList(Model model,@PageableDefault(size=10,sort = "id" , direction = Sort.Direction.DESC)Pageable pageable,
+    public String memberList(Model model,@PageableDefault(size=5,sort = "id" , direction = Sort.Direction.DESC)Pageable pageable,
                              @RequestParam(required = false, defaultValue = "") String searchText)throws Exception{
         Page<Member> members = memberService.memberList(searchText,searchText,pageable);
         Page<Member> setMembers = memberService.getDay(members);
+        for(Member member : setMembers){
+            memberService.write(member);
+        }
+        int startPage = Math.max(1,setMembers.getPageable().getPageNumber() - 4); // 시작 페이지
+        int endPage = Math.min(setMembers.getTotalPages(),setMembers.getPageable().getPageNumber() + 4); // 마지막 페이지
 
-        int startPage = Math.max(1,setMembers.getPageable().getPageNumber() - 4);
-        int endPage = Math.min(setMembers.getTotalPages(),setMembers.getPageable().getPageNumber() + 4);
-
-        model.addAttribute("startPage",startPage);
+        model.addAttribute("startPage",startPage); // 시작 페이지 값을 startPage라는 이름으로 memberlist.html에 전달
         model.addAttribute("endPage",endPage);
         model.addAttribute("list",setMembers);
         return "memberlist";

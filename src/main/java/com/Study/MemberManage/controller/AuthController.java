@@ -4,6 +4,7 @@ import com.Study.MemberManage.entity.User;
 import com.Study.MemberManage.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -24,10 +25,13 @@ public class AuthController {
     }
 
     @PostMapping("/signupdo")
-    public String signUp(User user){
-        User newUser = user;
+    public String signUp(User user, String confirmpassword){
 
-        User userEntity = authService.signUp(user);
+        if (user.getPassword().equals(confirmpassword)){
+            authService.signUp(user);
+        }else{
+            return "signup";
+        }
 
         return "signin";
     }
